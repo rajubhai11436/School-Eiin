@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>বিদ্যালয়ের EIIN তথ্য</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            text-align: center;
+        }
+        input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .result {
+            margin-top: 20px;
+        }
+        .result p {
+            margin: 5px 0;
+        }
+        .telegram-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 8px 12px;
+            background-color: #0088cc;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .telegram-btn:active {
+            transform: scale(0.95);
+        }
+        .telegram-btn:hover {
+            background-color: #0077aa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>বিদ্যালয়ের EIIN তথ্য খুঁজুন</h1>
+        <input type="text" id="eiinInput" placeholder="EIIN নম্বর লিখুন">
+        <button onclick="fetchEIIN()">তথ্য দেখুন</button>
+        <div class="result" id="result"></div>
+        <div style="text-align: center;">
+            <a href="https://t.me/R366grp" 
+               class="telegram-btn" 
+               onclick="vibrateDevice()">টেলিগ্রাম চ্যানেল</a>
+        </div>
+    </div>
+
+    <script>
+        function fetchEIIN() {
+            const eiin = document.getElementById('eiinInput').value.trim();
+            if (!eiin) {
+                alert('EIIN নম্বর লিখুন');
+                return;
+            }
+
+            const url = `https://team-toolx-eiin-info.tiiny.io/php?eiin=${eiin}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const resultDiv = document.getElementById('result');
+                    if (data.error) {
+                        resultDiv.innerHTML = `<p style="color: red;">${data.error}</p>`;
+                        return;
+                    }
+
+                    resultDiv.innerHTML = `
+                        <h2>${data.school_name}</h2>
+                        <p><strong>EIIN:</strong> ${data.eiin}</p>
+                        <p><strong>অবস্থান:</strong> ${data.location}</p>
+                        <p><strong>মোবাইল:</strong> ${data.mobile}</p>
+                        <p><strong>ইমেইল:</strong> ${data.email}</p>
+                        <p><strong>জমা দেওয়ার অবস্থা:</strong> ${data.submission_status}</p>
+                        <p><strong>যাচাইয়ের অবস্থা:</strong> ${data.verification_status}</p>
+                        <p><strong>জমা দেওয়ার তারিখ:</strong> ${data.submission_date}</p>
+                        <p><strong>সার্ভের সময়কাল:</strong> ${data.survey_period}</p>
+                    `;
+                })
+                .catch(error => {
+                    console.error('ডাটা আনতে সমস্যা:', error);
+                    document.getElementById('result').innerHTML = 
+                        `<p style="color: red;">তথ্য আনতে ব্যর্থ। পরে আবার চেষ্টা করুন।</p>`;
+                });
+        }
+
+        function vibrateDevice() {
+            if (navigator.vibrate) {
+                navigator.vibrate(200); // ডিভাইস ২০০ms এর জন্য কম্পিত হবে।
+            }
+        }
+    </script>
+</body>
+</html>
